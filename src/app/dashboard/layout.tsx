@@ -13,7 +13,9 @@ const DashboardLayout = ({children,}: { children: React.ReactNode}) => {
     const {user} = useUser()
     const router = useRouter()
     useEffect(()=>{
-        user && checkUserBudget();
+        if(user){
+          checkUserBudget();
+        }
     },[user])
 
     const checkUserBudget =async () => {

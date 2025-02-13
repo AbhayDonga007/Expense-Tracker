@@ -1,7 +1,5 @@
 "use client"
-import { ActivityChart } from "@/components/ActivityChart";
 import { BudgetList } from "@/components/BudgetList";
-import { ExpensesTable } from "@/components/ExpensesTable";
 import { StatCard } from "@/components/StatCard";
 import { db } from "@/lib/dbConfig";
 import { Budgets, Expenses } from "@/schema";
@@ -12,15 +10,16 @@ import { useEffect, useState } from "react";
 export default function DashboardPage() {
   const { user } = useUser();
   const [budgetList, setBudgetList] = useState([]);
-  const [expenseList, setExpenseList] = useState([]);
+  // const [expenseList, setExpenseList] = useState([]);
   const [totalBudget,setTotalBudget] = useState(0);
   const [totalSpent,setTotalSpent] = useState(0);
 
   useEffect(() => {
-    user && getBudgetList();
+    if(user){getBudgetList();}
   }, [user]);
+
   useEffect(() => {
-    budgetList && calCardInfo();
+    if(budgetList) {calCardInfo();}
   }, [budgetList]);
 
   const calCardInfo = () => {
@@ -76,7 +75,7 @@ export default function DashboardPage() {
       <div className="mx-auto max-w-7xl space-y-8">
         <div>
           <h1 className="text-3xl font-bold">Hi, {user?.fullName} ✌️</h1>
-          <p className="text-gray-500 mt-1">Here's what happening with your money, Lets Manage your expense</p>
+          <p className="text-gray-500 mt-1">Here&apos;s what happening with your money, Lets Manage your expense</p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

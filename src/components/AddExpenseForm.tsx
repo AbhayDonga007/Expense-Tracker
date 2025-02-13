@@ -9,7 +9,7 @@ import { Budgets, Expenses } from "@/schema"
 import toast from "react-hot-toast"
 import moment from 'moment'
 
-export function AddExpenseForm({budgetId,user,onRefreshData}) {
+export function AddExpenseForm({budgetId,onRefreshData}) {
   const [name, setName] = useState("")
   const [amount, setAmount] = useState("")
 

@@ -1,6 +1,5 @@
 import { Home, TreePalmIcon as PalmTree } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect } from "react"
 
 interface Budget {
   id: string
@@ -10,25 +9,6 @@ interface Budget {
   spent: number
   total: number
 }
-
-const budgets: Budget[] = [
-  {
-    id: "1",
-    title: "Home Decor",
-    icon: "home",
-    items: 1,
-    spent: 1500,
-    total: 3500,
-  },
-  {
-    id: "2",
-    title: "Garden",
-    icon: "garden",
-    items: 1,
-    spent: 70,
-    total: 1500,
-  },
-]
 
 export function BudgetList({budgets}:Budget) {
   const calPer = () =>{

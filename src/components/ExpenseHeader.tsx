@@ -22,7 +22,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { useUser } from "@clerk/nextjs";
 
 const budgetCategories = [
   "Housing",
@@ -65,7 +64,6 @@ export function ExpenseHeader({budget,onRefreshData}) {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState();
   const [icon, setIcon] = useState("");
-  const { user } = useUser();
 
   const deleteBudget =async () => {
     const deleteExpense = await db.delete(Expenses).where(eq(Expenses.budgetId,budget.id)).returning()

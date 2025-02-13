@@ -2,8 +2,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -16,7 +14,6 @@ import { Input } from "@heroui/react";
 import { db } from "@/lib/dbConfig";
 import { Budgets } from "@/schema";
 import { useUser } from "@clerk/nextjs";
-import { Toast } from "@radix-ui/react-toast";
 import toast from "react-hot-toast";
 import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
@@ -98,9 +95,6 @@ export function CreateBudgetCard({
   const [icon, setIcon] = useState("");
   const [amount, setAmount] = useState();
   const { user } = useUser();
-
-  const [budgets, setBudgets] = useState(initialBudgets)
-  
 
   const onCreateBudget =async () => {
     const result = await db

@@ -63,7 +63,6 @@ import {
   Laptop,
   Apple,
   PiggyBank,
-  HelpCircle,
   Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -81,25 +80,25 @@ import { iconMap } from "@/lib/icons"
 //   onClick?: () => void
 // }
 
-interface BudgetCardProps {
-  id: number;
-  name: string;
-  icon: "car" | "travel";
-  amount: number;
-  createdBy: string;
-  // totalItems: number;
-  // totalSpend: number;
-  className?: string;
-}
+// interface BudgetCardProps {
+//   id: number;
+//   name: string;
+//   icon: "car" | "travel";
+//   amount: number;
+//   createdBy: string;
+//   // totalItems: number;
+//   // totalSpend: number;
+//   className?: string;
+// }
 
-const icons = {
-  books: Book,
-  fruits: Apple,
-  laptop: Laptop,
-  loan: PiggyBank,
-  shopping: ShoppingBag,
-  travel: Plane,
-};
+// const icons = {
+//   books: Book,
+//   fruits: Apple,
+//   laptop: Laptop,
+//   loan: PiggyBank,
+//   shopping: ShoppingBag,
+//   travel: Plane,
+// };
 
 export function BudgetCard({ budget }) {
   const IconComponent = iconMap[budget?.icon] || Home;

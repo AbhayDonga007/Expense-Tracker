@@ -32,7 +32,7 @@ const transactions: Transaction[] = [
   },
 ]
 
-export function LatestTransactions({expenseList}) {
+export function LatestTransactions({}) {
   return (
     <Card>
       <CardHeader>

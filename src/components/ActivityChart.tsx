@@ -3,29 +3,6 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-const data = [
-  {
-    name: "Home Decor",
-    totalSpend: 1500,
-    amount: 3500,
-  },
-  {
-    name: "Garden",
-    totalSpend: 200,
-    amount: 1300,
-  },
-  {
-    name: "Car Maintenance",
-    totalSpend: 500,
-    amount: 2300,
-  },
-  {
-    name: "Youtube Earning",
-    totalSpend: 1000,
-    amount: 5000,
-  },
-]
-
 export function ActivityChart({budgetList}) {
   return (
     <Card>

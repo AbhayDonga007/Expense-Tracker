@@ -14,7 +14,9 @@ export default function BudgetsPage() {
   const [budgetList, setBudgetList] = useState([]);
 
   useEffect(() => {
-    user && getBudgetList();
+    if (user) {
+      getBudgetList();
+    }
   }, [user]);
 
   const getBudgetList = async () => {

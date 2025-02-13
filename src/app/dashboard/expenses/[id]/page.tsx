@@ -2,7 +2,6 @@
 
 import { AddExpenseForm } from "@/components/AddExpenseForm";
 import { BudgetCard } from "@/components/BudgetCard";
-import { ExpenseCard } from "@/components/ExpenseCard";
 import { ExpenseHeader } from "@/components/ExpenseHeader";
 import { ExpensesTable } from "@/components/ExpensesTable";
 import { db } from "@/lib/dbConfig";
@@ -11,11 +10,11 @@ import { useUser } from "@clerk/nextjs";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
 import { use, useEffect, useState } from "react";
 
-const initialExpenses = [
-  { id: "1", name: "Living Room", amount: 800, date: "20/04/2024" },
-  { id: "2", name: "Bath", amount: 1000, date: "20/04/2024" },
-  { id: "3", name: "Kitchen", amount: 1500, date: "19/04/2024" },
-];
+// const initialExpenses = [
+//   { id: "1", name: "Living Room", amount: 800, date: "20/04/2024" },
+//   { id: "2", name: "Bath", amount: 1000, date: "20/04/2024" },
+//   { id: "3", name: "Kitchen", amount: 1500, date: "19/04/2024" },
+// ];
 
 export default function ExpensesPage({ params }) {
   // const {user} = useUser()
@@ -31,7 +30,9 @@ export default function ExpensesPage({ params }) {
   const [expenses, setExpenses] = useState([]); 
 
   useEffect(() => {
-    if (user) getBudgetInfo();
+    if (user){ 
+      getBudgetInfo();
+    }
     
   }, [user]);
 
