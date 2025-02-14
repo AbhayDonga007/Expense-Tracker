@@ -4,6 +4,7 @@ import { AddExpenseForm } from "@/components/AddExpenseForm";
 import { BudgetCard } from "@/components/BudgetCard";
 import { ExpenseHeader } from "@/components/ExpenseHeader";
 import { ExpensesTable } from "@/components/ExpensesTable";
+import { Budget, Expense } from "@/interface"; // Import correct types
 import { db } from "@/lib/dbConfig";
 import { Budgets, Expenses } from "@/schema";
 import { useUser } from "@clerk/nextjs";
@@ -11,32 +12,48 @@ import { and, desc, eq, getTableColumns, sql } from "drizzle-orm";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-interface ExpensesPageProps {
-  params: { id: string }; 
-}
-
-export default function ExpensesPage({ params }: ExpensesPageProps) {
+export default function ExpensesPage() {
   const { user } = useUser();
-  const { id } = useParams(); // Extracting id correctly
-  const [budgetInfo, setBudgetInfo] = useState<any>(null);
-  const [expenses, setExpenses] = useState<any[]>([]);
+  const params = useParams();
+  const id = params?.id as string; // Ensure id is a string
 
-  console.log(params);
-  
+  const [budgetInfo, setBudgetInfo] = useState<Budget | null>(null);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+
+  // ✅ Fetch Expenses List (Defined First to Avoid Dependency Issues)
+  const getExpensesList = useCallback(async () => {
+    if (!id) return;
+
+    const result = await db
+      .select({
+        id: Expenses.id,
+        name: Expenses.name,
+        amount: sql<number>`${Expenses.amount}`.mapWith(Number), // Ensure amount is a number
+        budgetId: Expenses.budgetId,
+        createdAt: Expenses.createdAt,
+      })
+      .from(Expenses)
+      .where(eq(Expenses.budgetId, Number(id)))
+      .orderBy(desc(Expenses.id));
+
+    setExpenses(result);
+  }, [id]);
+
+  // ✅ Fetch Budget Info
   const getBudgetInfo = useCallback(async () => {
-    if (!user) return;
+    if (!user?.primaryEmailAddress?.emailAddress) return;
 
     const result = await db
       .select({
         ...getTableColumns(Budgets),
-        totalSpend: sql<number>`SUM(${Expenses.amount})`.mapWith(Number),
+        totalSpend: sql<number>`COALESCE(SUM(${Expenses.amount}), 0)`.mapWith(Number),
         totalItems: sql<number>`COUNT(${Expenses.id})`.mapWith(Number),
       })
       .from(Budgets)
       .leftJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
       .where(
         and(
-          eq(Budgets.createdBy, user.primaryEmailAddress?.emailAddress!),
+          eq(Budgets.createdBy, user.primaryEmailAddress.emailAddress),
           eq(Budgets.id, Number(id))
         )
       )
@@ -44,19 +61,8 @@ export default function ExpensesPage({ params }: ExpensesPageProps) {
       .orderBy(desc(Budgets.id));
 
     setBudgetInfo(result[0] || null);
-    getExpensesList();
-  }, [user, id]);
-
-  // Fetch Expense List
-  const getExpensesList = useCallback(async () => {
-    const result = await db
-      .select()
-      .from(Expenses)
-      .where(eq(Expenses.budgetId, Number(id)))
-      .orderBy(desc(Expenses.id));
-
-    setExpenses(result);
-  }, [id]);
+    getExpensesList(); // Fetch expenses after budget is updated
+  }, [user, id, getExpensesList]);
 
   useEffect(() => {
     if (user) {
@@ -67,10 +73,10 @@ export default function ExpensesPage({ params }: ExpensesPageProps) {
   return (
     <div className="min-h-screen p-8">
       <div className="mx-auto max-w-6xl">
-        <ExpenseHeader onRefreshData={getBudgetInfo} budget={budgetInfo} />
+        <ExpenseHeader onRefreshData={getBudgetInfo} budget={budgetInfo ?? ({} as Budget)} />
         
         <div className="grid gap-6 md:grid-cols-2">
-          <BudgetCard budget={budgetInfo} />
+          <BudgetCard budget={budgetInfo ?? ({} as Budget)} />
           <AddExpenseForm budgetId={Number(id)} onRefreshData={getBudgetInfo} />
         </div>
 

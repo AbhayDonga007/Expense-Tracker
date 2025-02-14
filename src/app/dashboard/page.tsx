@@ -1,15 +1,15 @@
 "use client";
 import { StatCard } from "@/components/StatCard";
+import { Budget, Expense } from "@/interface";
 import { db } from "@/lib/dbConfig";
 import { Budgets, Expenses } from "@/schema";
 import { useUser } from "@clerk/nextjs";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
 import { useCallback, useEffect, useState } from "react";
 
-
 export default function DashboardPage() {
   const { user } = useUser();
-  
+
   const [budgetList, setBudgetList] = useState<Budget[]>([]);
   const [expenseList, setExpenseList] = useState<Expense[]>([]);
   const [totalBudget, setTotalBudget] = useState(0);
@@ -28,6 +28,23 @@ export default function DashboardPage() {
     setTotalSpent(spent);
   }, [budgetList]);
 
+  const getAllExpenses = useCallback(async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) return;
+
+    const result: Expense[] = await db
+      .select({
+        id: Expenses.id,
+        name: Expenses.name,
+        amount: sql<number>`${Expenses.amount}`.mapWith(Number),
+        createdAt: Expenses.createdAt,
+      })
+      .from(Expenses)
+      .where(eq(Expenses.budgetId, Budgets.id))
+      .orderBy(desc(Expenses.id));
+
+    setExpenseList(result);
+  }, [user]);
+
   const getBudgetList = useCallback(async () => {
     if (!user?.primaryEmailAddress?.emailAddress) return;
 
@@ -44,31 +61,14 @@ export default function DashboardPage() {
       .orderBy(desc(Budgets.id));
 
     setBudgetList(result);
-    getAllExpenses();
   }, [user]);
 
-  const getAllExpenses = useCallback(async () => {
-    if (!user?.primaryEmailAddress?.emailAddress) return;
-
-    const result: Expense[] = await db
-      .select({
-        id: Expenses.id,
-        name: Expenses.name,
-        amount: sql<number>`${Expenses.amount}`.mapWith(Number),
-        createdAt: Expenses.createdAt,
-      })
-      .from(Expenses)
-      .where(eq(Expenses.budgetId, Budgets.id))
-      .orderBy(desc(Expenses.id));
-
-    setExpenseList(result);
-    console.log(expenseList);
-    
-  }, [user,expenseList]);
-
   useEffect(() => {
-    if (user) getBudgetList();
-  }, [user, getBudgetList]);
+    if (user) {
+      getBudgetList();
+      getAllExpenses();
+    }
+  }, [user, getBudgetList, getAllExpenses]);
 
   useEffect(() => {
     if (budgetList.length > 0) calCardInfo();

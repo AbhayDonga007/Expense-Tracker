@@ -13,18 +13,18 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   const checkUserBudget = useCallback(async () => {
-    if (!user?.primaryEmailAddress?.emailAddress) return;
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    if (!userEmail) return;
 
     const result = await db
       .select()
       .from(Budgets)
-      .where(eq(Budgets.createdBy, user?.primaryEmailAddress?.emailAddress));
+      .where(eq(Budgets.createdBy, userEmail));
 
-    console.log(result);
-    if (result.length == 0) {
+    if (result.length === 0) {
       router.replace("/dashboard/budgets");
     }
-  }, []);
+  }, [router, user?.primaryEmailAddress?.emailAddress]);
 
   useEffect(() => {
     if (user) {
@@ -34,13 +34,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* <SiteHeader /> */}
       <Navbar />
       <div className="flex-1 flex">
         <aside className="w-64 border-r px-4 py-6">
           <MainNav />
         </aside>
-        <main className="w-[100%]">{children}</main>
+        <main className="w-full">{children}</main>
       </div>
     </div>
   );

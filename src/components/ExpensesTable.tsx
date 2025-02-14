@@ -4,13 +4,9 @@ import { db } from "@/lib/dbConfig"
 import { Expenses } from "@/schema"
 import { eq } from "drizzle-orm"
 import toast from "react-hot-toast"
+import { Expense } from "@/interface"
 
-interface Expense {
-  id: string
-  name: string
-  amount: number
-  createdAt: string
-}
+
 
 interface ExpensesTableProps {
   expenses: Expense[];

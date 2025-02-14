@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import React from "react";
 import { iconMap } from "@/lib/icons"; // Ensure this contains valid mappings for icons
+import { Budget } from "@/interface";
 interface BudgetCardProps {
   budget: Budget; 
 }

@@ -1,4 +1,4 @@
-interface Budget {
+export interface Budget {
   id: number;
   name: string;
   amount: string; // Stored as text in DB
@@ -8,7 +8,7 @@ interface Budget {
   totalItems?: number;
 }
 
-interface Expense {
+export interface Expense {
   id: number;
   name: string;
   amount: number;

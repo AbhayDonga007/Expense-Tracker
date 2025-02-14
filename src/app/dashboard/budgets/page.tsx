@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import { db } from "@/lib/dbConfig";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
 import { Budgets, Expenses } from "@/schema";
+import { Budget } from "@/interface";
 
 export default function BudgetsPage() {
   const { user } = useUser();
