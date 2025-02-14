@@ -19,38 +19,40 @@ import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 interface CreateBudgetCardProps {
-  className?: string
+  className?: string;
+  onRefreshData: () => void; 
 }
 
-const initialBudgets = [
-  { id: "1", title: "Books", icon: "books", amount: 1000, spent: 0, items: 0 },
-  { id: "2", title: "Fruits", icon: "fruits", amount: 200, spent: 0, items: 0 },
-  {
-    id: "3",
-    title: "Laptop",
-    icon: "laptop",
-    amount: 3000,
-    spent: 0,
-    items: 0,
-  },
-  { id: "4", title: "Loan", icon: "loan", amount: 5000, spent: 0, items: 0 },
-  {
-    id: "5",
-    title: "Shopping",
-    icon: "shopping",
-    amount: 1000,
-    spent: 0,
-    items: 0,
-  },
-  {
-    id: "6",
-    title: "Travel",
-    icon: "travel",
-    amount: 2000,
-    spent: 0,
-    items: 0,
-  },
-];
+
+// const initialBudgets = [
+//   { id: "1", title: "Books", icon: "books", amount: 1000, spent: 0, items: 0 },
+//   { id: "2", title: "Fruits", icon: "fruits", amount: 200, spent: 0, items: 0 },
+//   {
+//     id: "3",
+//     title: "Laptop",
+//     icon: "laptop",
+//     amount: 3000,
+//     spent: 0,
+//     items: 0,
+//   },
+//   { id: "4", title: "Loan", icon: "loan", amount: 5000, spent: 0, items: 0 },
+//   {
+//     id: "5",
+//     title: "Shopping",
+//     icon: "shopping",
+//     amount: 1000,
+//     spent: 0,
+//     items: 0,
+//   },
+//   {
+//     id: "6",
+//     title: "Travel",
+//     icon: "travel",
+//     amount: 2000,
+//     spent: 0,
+//     items: 0,
+//   },
+// ];
 
 const budgetCategories = [
   "Housing",
@@ -93,26 +95,33 @@ export function CreateBudgetCard({
 }: CreateBudgetCardProps) {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
-  const [amount, setAmount] = useState();
+  const [amount, setAmount] = useState<number | undefined>(undefined);
   const { user } = useUser();
 
-  const onCreateBudget =async () => {
+  const onCreateBudget = async () => {
+    if (!name || !amount || !user?.primaryEmailAddress?.emailAddress) {
+      toast.error("Please fill all fields");
+      return;
+    }
+  
     const result = await db
       .insert(Budgets)
       .values({
         name: name,
-        amount: amount,
-        icon:icon,
-        createdBy: user?.primaryEmailAddress?.emailAddress,
+        amount: String(amount),
+        icon: icon || null, 
+        createdBy: user.primaryEmailAddress.emailAddress,
       })
       .returning({ insertedId: Budgets.id });
-
-    if (result) {
-      toast.success("Budget Added Successful");
-      onRefreshData()
+  
+    if (result.length > 0) {
+      toast.success("Budget Added Successfully");
+      onRefreshData();
     }
-    setOpen(false)
-  }
+  
+    setOpen(false);
+  };
+  
 
   const [open, setOpen] = useState(false);
 
@@ -140,7 +149,6 @@ export function CreateBudgetCard({
         <DialogHeader>
           <DialogTitle>Create New Budget</DialogTitle>
         </DialogHeader>
-        {/* <form onSubmit={handleCreateBudget} className="grid gap-4 py-4"> */}
           <div className="grid gap-2">
             <Label htmlFor="title">Budget Name</Label>
             <Input
@@ -173,14 +181,13 @@ export function CreateBudgetCard({
               type="number"
               placeholder="e.g. 1000"
               className="dark:bg-gray-900"
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => setAmount(Number(e.target.value) || undefined)}
               required
             />
           </div>
           <Button onClick={()=>onCreateBudget()} type="submit" className="mt-2">
             Create Budget
           </Button>
-        {/* </form> */}
       </DialogContent>
     </Dialog>
   );

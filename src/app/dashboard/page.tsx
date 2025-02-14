@@ -1,81 +1,87 @@
-"use client"
-import { BudgetList } from "@/components/BudgetList";
+"use client";
 import { StatCard } from "@/components/StatCard";
 import { db } from "@/lib/dbConfig";
 import { Budgets, Expenses } from "@/schema";
 import { useUser } from "@clerk/nextjs";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 
 export default function DashboardPage() {
   const { user } = useUser();
-  const [budgetList, setBudgetList] = useState([]);
-  // const [expenseList, setExpenseList] = useState([]);
-  const [totalBudget,setTotalBudget] = useState(0);
-  const [totalSpent,setTotalSpent] = useState(0);
-
-  useEffect(() => {
-    if(user){getBudgetList();}
-  }, [user]);
-
-  useEffect(() => {
-    if(budgetList) {calCardInfo();}
-  }, [budgetList]);
-
-  const calCardInfo = () => {
-    let spent = 0, budget = 0;
   
-    console.log(budgetList);
-  
+  const [budgetList, setBudgetList] = useState<Budget[]>([]);
+  const [expenseList, setExpenseList] = useState<Expense[]>([]);
+  const [totalBudget, setTotalBudget] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
+
+  const calCardInfo = useCallback(() => {
+    let spent = 0,
+      budget = 0;
+
     budgetList.forEach((ele) => {
-      budget += Number(ele.amount); 
-      spent += Number(ele.totalSpend) || 0;
+      budget += Number(ele.amount);
+      spent += ele.totalSpend ?? 0;
     });
-  
+
     setTotalBudget(budget);
     setTotalSpent(spent);
-  };
-  
+  }, [budgetList]);
 
-  const getBudgetList = async () => {
-    const result = await db
+  const getBudgetList = useCallback(async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) return;
+
+    const result: Budget[] = await db
       .select({
         ...getTableColumns(Budgets),
-        totalSpend: sql`sum (${Expenses.amount})`.mapWith(Number),
-        totalItems: sql`count (${Expenses.id})`.mapWith(Number),
+        totalSpend: sql<number>`COALESCE(SUM(${Expenses.amount}), 0)`.mapWith(Number),
+        totalItems: sql<number>`COUNT(${Expenses.id})`.mapWith(Number),
       })
       .from(Budgets)
       .leftJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
-      .where(eq(Budgets.createdBy, user?.primaryEmailAddress?.emailAddress))
+      .where(eq(Budgets.createdBy, user.primaryEmailAddress.emailAddress))
       .groupBy(Budgets.id)
       .orderBy(desc(Budgets.id));
 
     setBudgetList(result);
     getAllExpenses();
-  };
+  }, [user]);
 
+  const getAllExpenses = useCallback(async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) return;
 
-  const getAllExpenses =async () =>{
-    const result = await db.select({
-      id:Expenses.id,
-      name: Expenses.name,
-      amount: Expenses.amount,
-      createdAt: Expenses.createdAt
-    }).from(Budgets).rightJoin(Expenses,eq(Budgets.id,Expenses.budgetId))
-    .where(eq(Budgets.createdBy,user?.primaryEmailAddress?.emailAddress))
-    .orderBy(desc(Expenses.id));
+    const result: Expense[] = await db
+      .select({
+        id: Expenses.id,
+        name: Expenses.name,
+        amount: sql<number>`${Expenses.amount}`.mapWith(Number),
+        createdAt: Expenses.createdAt,
+      })
+      .from(Expenses)
+      .where(eq(Expenses.budgetId, Budgets.id))
+      .orderBy(desc(Expenses.id));
 
-    console.log(result);
+    setExpenseList(result);
+    console.log(expenseList);
     
-    setExpenseList(result)
-  }
+  }, [user,expenseList]);
+
+  useEffect(() => {
+    if (user) getBudgetList();
+  }, [user, getBudgetList]);
+
+  useEffect(() => {
+    if (budgetList.length > 0) calCardInfo();
+  }, [budgetList, calCardInfo]);
 
   return (
     <div className="min-h-screen p-8">
       <div className="mx-auto max-w-7xl space-y-8">
         <div>
           <h1 className="text-3xl font-bold">Hi, {user?.fullName} ✌️</h1>
-          <p className="text-gray-500 mt-1">Here&apos;s what happening with your money, Lets Manage your expense</p>
+          <p className="text-gray-500 mt-1">
+            Here&apos;s what&apos;s happening with your money. Let&apos;s manage your expenses!
+          </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -90,11 +96,9 @@ export default function DashboardPage() {
             <ExpensesTable expenses={expenseList} /> */}
           </div>
           <div>
-            <BudgetList budgets={budgetList}/>
+            {/* <BudgetList budgets={budgetList} /> */}
           </div>
         </div>
-
-        
       </div>
     </div>
   );

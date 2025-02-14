@@ -13,18 +13,19 @@ interface Expense {
 }
 
 interface ExpensesTableProps {
-  expenses: Expense[]
+  expenses: Expense[];
+  onRefreshData: () => void; 
 }
 
 export function ExpensesTable({ expenses,onRefreshData }: ExpensesTableProps) {
-  const deleteExpense =async (expense) =>{
-    const result = await db.delete(Expenses).where(eq(Expenses.id,expense.id)).returning()
+  const deleteExpense =async (expense: Expense) =>{
+    const result = await db.delete(Expenses).where(eq(Expenses.id,Number(expense.id))).returning()
     if(result){
       toast.success("Expense deleted")
       onRefreshData();
     }
-
   }
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-bold">Latest Expenses</h2>

@@ -3,7 +3,11 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-export function ActivityChart({budgetList}) {
+interface ActivityChartProps {
+  budgetList: Budget[];
+}
+
+export function ActivityChart({ budgetList }: ActivityChartProps) {
   return (
     <Card>
       <CardHeader>

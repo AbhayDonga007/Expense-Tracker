@@ -15,7 +15,7 @@ import {
 import { db } from "@/lib/dbConfig";
 import { Budgets, Expenses } from "@/schema";
 import { eq } from "drizzle-orm";
-import { use, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
@@ -58,11 +58,16 @@ const budgetCategories = [
   "Subscriptions",
 ];
 
-export function ExpenseHeader({budget,onRefreshData}) {
+interface ExpenseHeaderProps {
+  budget: Budget;
+  onRefreshData: () => void;
+}
+
+export function ExpenseHeader({budget,onRefreshData}:ExpenseHeaderProps) {
 
   const route = useRouter()
   const [name, setName] = useState("");
-  const [amount, setAmount] = useState();
+  const [amount, setAmount] = useState<number | undefined>(undefined);
   const [icon, setIcon] = useState("");
 
   const deleteBudget =async () => {
@@ -77,19 +82,20 @@ export function ExpenseHeader({budget,onRefreshData}) {
 
   const [isEditOpen, setIsEditOpen] = useState(false)
 
-  const UpdateBudget =async () => {
+  const UpdateBudget = async () => {
     const result = await db.update(Budgets).set({
-      name:name,
-      amount:amount,
-      icon:icon,
-    }).where(eq(Budgets.id,budget.id)).returning()
-
-    if(result){
-      toast.success("Budget Updated")
-      onRefreshData()
+      name: name,
+      amount: amount?.toString(),
+      icon: icon,
+    }).where(eq(Budgets.id, budget.id)).returning();
+  
+    if (result) {
+      toast.success("Budget Updated");
+      onRefreshData();
     }
-    setIsEditOpen(false)
-  }
+    setIsEditOpen(false);
+  };
+  
 
   return (
     <div className="flex items-center justify-between mb-8">
@@ -118,7 +124,7 @@ export function ExpenseHeader({budget,onRefreshData}) {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="icon">Category</Label>
-                <Select onValueChange={setIcon} name="icon" defaultValue={budget?.icon}>
+                <Select onValueChange={setIcon} name="icon" defaultValue={budget?.icon || undefined}>
                   <SelectTrigger className="dark:bg-gray-900">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -136,13 +142,13 @@ export function ExpenseHeader({budget,onRefreshData}) {
                   name="amount"
                   type="number"
                   defaultValue={budget?.amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => setAmount(e.target.value ? Number(e.target.value) : undefined)}
                   className="dark:bg-gray-900"
                   required
                 />
               </div>
               <div className="grid gap-2">
-                <Label className="text-sm text-gray-500 dark:text-gray-400">Current Spent: ${budget?.spent}</Label>
+                <Label className="text-sm text-gray-500 dark:text-gray-400">Current Spent: ${budget?.totalSpend ?? 0}</Label>
               </div>
               <Button onClick={()=>UpdateBudget()} type="submit" className="mt-2">
                 Update Budget
