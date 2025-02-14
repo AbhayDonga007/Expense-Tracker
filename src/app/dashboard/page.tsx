@@ -14,6 +14,7 @@ export default function DashboardPage() {
   const [expenseList, setExpenseList] = useState<Expense[]>([]);
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalSpent, setTotalSpent] = useState(0);
+  console.log(expenseList);
 
   const calCardInfo = useCallback(() => {
     let spent = 0,
@@ -43,6 +44,7 @@ export default function DashboardPage() {
       .orderBy(desc(Expenses.id));
 
     setExpenseList(result);
+    
   }, [user]);
 
   const getBudgetList = useCallback(async () => {
