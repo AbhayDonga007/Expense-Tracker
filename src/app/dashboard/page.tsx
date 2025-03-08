@@ -100,7 +100,7 @@ export default function DashboardPage() {
       if (totalBudget > 0 || totalSpent > 0) {
         try {
           const advice = await getFinancialAdvice(totalBudget, totalSpent,budgetList,expenseList);
-          setFinancialAdvice(advice); // ✅ Now TypeScript won't throw an error
+          setFinancialAdvice(advice); 
         } catch (error) {
           console.error("Error fetching advice:", error);
           setFinancialAdvice("Unable to fetch financial advice at this moment.");
@@ -109,7 +109,7 @@ export default function DashboardPage() {
     };
 
     fetchFinancialAdvice();
-  }, [totalBudget, totalSpent]);
+  }, [totalBudget, totalSpent,budgetList,expenseList]);
 
   return (
     <>

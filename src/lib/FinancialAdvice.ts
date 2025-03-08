@@ -9,9 +9,14 @@ if (!apiKey) {
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
-const getFinancialAdvice = async (totalBudget: number, totalSpend: number,budgetList:Budget[],expenseList: Expense[]): Promise<string> => {
+const getFinancialAdvice = async (
+  totalBudget: number,
+  totalSpend: number,
+  budgetList: Budget[],
+  expenseList: Expense[]
+): Promise<string> => {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // Use correct model name
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     const userPrompt = `
     Given the following financial data:
@@ -28,15 +33,24 @@ const getFinancialAdvice = async (totalBudget: number, totalSpend: number,budget
     const advice = response.text();
 
     return advice || "No advice available.";
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Google Gemini API Error:", err);
 
-    if (err.response?.status === 404) {
-      return "The requested model is not available. Please check your API key and permissions.";
+    if (isApiError(err)) {
+      if (err.response?.status === 404) {
+        return "The requested model is not available. Please check your API key and permissions.";
+      }
+    } else if (err instanceof Error) {
+      return err.message;
     }
 
     return "Failed to retrieve financial advice. Please try again later.";
   }
 };
+
+// Type guard function to check if err is an API error
+function isApiError(error: unknown): error is { response?: { status: number } } {
+  return typeof error === "object" && error !== null && "response" in error;
+}
 
 export default getFinancialAdvice;

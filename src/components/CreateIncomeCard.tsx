@@ -12,17 +12,10 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@heroui/react";
 import { db } from "@/lib/dbConfig";
-import { Budgets, Incomes } from "@/schema";
+import { Incomes } from "@/schema";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { Label } from "./ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import moment from "moment";
 
 interface CreateBudgetCardProps {

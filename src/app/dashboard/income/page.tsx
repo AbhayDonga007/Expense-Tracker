@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import CreateIncomeCard from "@/components/CreateIncomeCard";
 import Footer from "@/components/footer";
 import { IncomeTable } from "@/components/IncomeTable";
@@ -9,11 +10,11 @@ import { useUser } from "@clerk/nextjs";
 import { desc, eq, getTableColumns } from "drizzle-orm";
 import React, { useCallback, useEffect, useState } from "react";
 
-type Props = {};
+// ✅ Fixed empty object type issue
+type Props = Record<string, never>;
 
-const page = (props: Props) => {
+const Page: React.FC<Props> = () => {
   const { user } = useUser();
-
   const [incomeList, setIncomeList] = useState<Income[]>([]);
 
   const getIncomeList = useCallback(async () => {
@@ -50,13 +51,6 @@ const page = (props: Props) => {
           </h1>
 
           <CreateIncomeCard onRefreshData={getIncomeList} />
-          {/* <CreateBudgetCard onRefreshData={getBudgetList} />
-
-          <div className="grid gap-6 mt-5 sm:grid-cols-2 lg:grid-cols-3">
-            {budgetList.map((budget) => (
-              <BudgetCard key={budget.id} budget={budget} />
-            ))}
-          </div> */}
           <div className="mt-8">
             <IncomeTable onRefreshData={getIncomeList} incomes={incomeList} />
           </div>
@@ -67,4 +61,4 @@ const page = (props: Props) => {
   );
 };
 
-export default page;
+export default Page;
