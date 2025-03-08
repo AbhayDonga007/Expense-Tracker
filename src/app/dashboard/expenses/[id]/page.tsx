@@ -4,6 +4,7 @@ import { AddExpenseForm } from "@/components/AddExpenseForm";
 import { BudgetCard } from "@/components/BudgetCard";
 import { ExpenseHeader } from "@/components/ExpenseHeader";
 import { ExpensesTable } from "@/components/ExpensesTable";
+import Footer from "@/components/footer";
 import { Budget, Expense } from "@/interface"; // Import correct types
 import { db } from "@/lib/dbConfig";
 import { Budgets, Expenses } from "@/schema";
@@ -71,6 +72,7 @@ export default function ExpensesPage() {
   }, [user, getBudgetInfo]);
 
   return (
+    <>
     <div className="min-h-screen p-8">
       <div className="mx-auto max-w-6xl">
         <ExpenseHeader onRefreshData={getBudgetInfo} budget={budgetInfo ?? ({} as Budget)} />
@@ -85,5 +87,7 @@ export default function ExpensesPage() {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }

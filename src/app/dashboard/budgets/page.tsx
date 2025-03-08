@@ -8,6 +8,7 @@ import { db } from "@/lib/dbConfig";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
 import { Budgets, Expenses } from "@/schema";
 import { Budget } from "@/interface";
+import Footer from "@/components/footer";
 
 export default function BudgetsPage() {
   const { user } = useUser();
@@ -39,6 +40,7 @@ export default function BudgetsPage() {
   }, [user, getBudgetList]);
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
       <div className="mx-auto max-w-7xl">
         <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">
@@ -57,5 +59,7 @@ export default function BudgetsPage() {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }

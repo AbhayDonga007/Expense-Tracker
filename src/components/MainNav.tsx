@@ -12,6 +12,11 @@ const items = [
     icon: LayoutDashboard,
   },
   {
+    title: "Incomes",
+    href: "/dashboard/income",
+    icon: LayoutDashboard,
+  },
+  {
     title: "Budgets",
     href: "/dashboard/budgets",
     icon: Plus,

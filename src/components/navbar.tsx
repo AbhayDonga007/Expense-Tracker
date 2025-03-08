@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Image from "next/image";
+import logo from '@/images/logo.png'
 
 export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center">
-        <Link href="/" className="mr-6 flex items-center space-x-2">
-          <span className="font-bold">Expense Tracker</span>
-        </Link>
+      <div className="container flex h-18 max-w-screen-2xl justify-center items-center">
         <nav className="flex flex-1 items-center space-x-6 text-sm font-medium">
+          <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Image src={logo} alt="Logo" className="w-[250px]" />
+          </Link>
           <Link
             href="/solutions"
             className="transition-colors hover:text-primary"
@@ -26,6 +28,7 @@ export default function Navbar() {
             About Us
           </Link>
         </nav>
+        
         <div className="flex items-center space-x-4">
           {/* <Link href="https://github.com/amanesoft" target="_blank" rel="noreferrer">
             <Button variant="ghost" size="icon">

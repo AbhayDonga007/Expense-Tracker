@@ -9,7 +9,7 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Expense Tracker",
+  title: "Finance Fusion",
   description: "Amane Soft delivers innovative, high-performance software solutions for businesses of the future.",
 }
 

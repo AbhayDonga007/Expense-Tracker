@@ -1,13 +1,17 @@
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
+import Image from "next/image"
+import logo from '@/images/logo.png'
 
 export default function Footer() {
   return (
     <footer className="border-t">
       <div className="container flex flex-col gap-8 py-8 md:flex-row md:py-12">
         <div className="flex-1 space-y-4">
-          <h2 className="font-bold">Expense Tracker</h2>
-          <p className="text-sm text-muted-foreground">Pioneering software solutions for the digital age.</p>
+        <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Image src={logo} alt="Logo" className="w-[250px]" />
+          </Link>
+          <p className="text-sm text-muted-foreground">Empowering businesses with smart, seamless financial solutions. Stay ahead with innovation and security.</p>
         </div>
         <div className="grid flex-1 grid-cols-2 gap-12 sm:grid-cols-3">
           <div className="space-y-4">
@@ -70,7 +74,7 @@ export default function Footer() {
       </div>
       <div className="container border-t py-6">
         <p className="text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Expense Tracker, Inc. All rights reserved.
+          © {new Date().getFullYear()} Finance Fusion, Inc. All rights reserved.
         </p>
       </div>
     </footer>

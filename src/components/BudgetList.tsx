@@ -1,21 +1,22 @@
 import { Home, TreePalmIcon as PalmTree } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Budget } from "@/interface";
 
 // Define Budget Interface
-interface Budget {
-  id: number;
-  name: string;
-  amount: number;
-  icon?: string;
-  totalSpend?: number;
-  totalItems?: number;
-}
+// interface Budget {
+//   id: number;
+//   name: string;
+//   amount: number;
+//   icon?: string;
+//   totalSpend?: number;
+//   totalItems?: number;
+// }
 
 interface BudgetListProps {
-  budgets: Budget[]; 
+  budgets: Budget[];
 }
 
-export const BudgetList: React.FC<BudgetListProps> = ({ budgets }) => {
+export const BudgetList = ({ budgets }:BudgetListProps) => {
   return (
     <Card>
       <CardHeader>
@@ -26,7 +27,7 @@ export const BudgetList: React.FC<BudgetListProps> = ({ budgets }) => {
           <p className="text-gray-500">No budgets available.</p>
         ) : (
           budgets.map((budget) => {
-            const percentage = ((budget.totalSpend ?? 0) / budget.amount) * 100;
+            const percentage = ((budget.totalSpend ?? 0) / Number(budget.amount)) * 100;
 
             return (
               <div key={budget.id} className="rounded-lg border p-4">
@@ -56,7 +57,7 @@ export const BudgetList: React.FC<BudgetListProps> = ({ budgets }) => {
                       ₹{budget.totalSpend ?? 0} Spent
                     </span>
                     <span className="text-gray-500">
-                      ₹{budget.amount - (budget.totalSpend ?? 0)} Remaining
+                      ₹{Number(budget.amount) - (budget.totalSpend ?? 0)} Remaining
                     </span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-gray-100">

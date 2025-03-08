@@ -5,47 +5,47 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { db } from "@/lib/dbConfig";
-import { Expenses } from "@/schema";
+import { Incomes } from "@/schema";
 import { eq } from "drizzle-orm";
 import toast from "react-hot-toast";
-import { Expense } from "@/interface";
+import { Income } from "@/interface";
 
-interface ExpensesTableProps {
-  expenses: Expense[];
+interface IncomeTableProps {
+  incomes: Income[];
   onRefreshData: () => void;
 }
 
-export function ExpensesTable({ expenses, onRefreshData }: ExpensesTableProps) {
+export function IncomeTable({ incomes, onRefreshData }: IncomeTableProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editExpense, setEditExpense] = useState<Expense | null>(null);
+  const [editIncome, setEditIncome] = useState<Income | null>(null);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
 
-  const deleteExpense = async (expense: Expense) => {
-    const result = await db.delete(Expenses).where(eq(Expenses.id, Number(expense.id))).returning();
+  const deleteIncome = async (income: Income) => {
+    const result = await db.delete(Incomes).where(eq(Incomes.id, Number(income.id))).returning();
     if (result) {
-      toast.success("Expense deleted");
+      toast.success("Income deleted");
       onRefreshData();
     }
   };
 
-  const openEditDialog = (expense: Expense) => {
-    setEditExpense(expense);
-    setName(expense.name);
-    setAmount(expense.amount);
+  const openEditDialog = (income: Income) => {
+    setEditIncome(income);
+    setName(income.name);
+    setAmount(income.amount);
     setIsEditOpen(true);
   };
 
-  const updateExpense = async () => {
-    if (!editExpense) return;
+  const updateIncome = async () => {
+    if (!editIncome) return;
     const result = await db
-      .update(Expenses)
-      .set({ name, amount: String(amount) })
-      .where(eq(Expenses.id, editExpense.id))
+      .update(Incomes)
+      .set({ name, amount: String(amount) }) 
+      .where(eq(Incomes.id, editIncome.id))
       .returning();
 
     if (result) {
-      toast.success("Expense updated");
+      toast.success("Income updated");
       setIsEditOpen(false);
       onRefreshData();
     }
@@ -53,24 +53,24 @@ export function ExpensesTable({ expenses, onRefreshData }: ExpensesTableProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold">Latest Expenses</h2>
+      <h2 className="text-xl font-bold">Latest Incomes</h2>
       <div className="rounded-lg border">
-        <div className="grid grid-cols-5 gap-4 p-4 font-medium">
+        <div className="grid grid-cols-4 gap-4 p-4 font-medium">
           <div>Name</div>
           <div>Amount</div>
           <div>Date</div>
           <div>Actions</div>
         </div>
-        {expenses.map((expense) => (
-          <div key={expense.id} className="grid grid-cols-5 gap-4 border-t p-4">
-            <div>{expense.name}</div>
-            <div>₹{expense.amount}</div>
-            <div>{expense.createdAt}</div>
+        {incomes.map((income) => (
+          <div key={income.id} className="grid grid-cols-4 gap-4 border-t p-4">
+            <div>{income.name}</div>
+            <div>₹{income.amount}</div>
+            <div>{income.createdAt}</div>
             <div className="flex space-x-2">
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => openEditDialog(expense)}
+                onClick={() => openEditDialog(income)}
                 className="text-blue-600 hover:text-blue-700"
               >
                 <Pencil className="h-4 w-4" />
@@ -78,7 +78,7 @@ export function ExpensesTable({ expenses, onRefreshData }: ExpensesTableProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => deleteExpense(expense)}
+                onClick={() => deleteIncome(income)}
                 className="text-red-600 hover:text-red-700"
               >
                 <Trash2 className="h-4 w-4" />
@@ -88,14 +88,14 @@ export function ExpensesTable({ expenses, onRefreshData }: ExpensesTableProps) {
         ))}
       </div>
 
-      {/* Edit Expense Dialog */}
+      {/* Edit Income Dialog */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-[425px] dark:bg-gray-950">
           <DialogHeader>
-            <DialogTitle>Edit Expense</DialogTitle>
+            <DialogTitle>Edit Income</DialogTitle>
           </DialogHeader>
           <div className="grid gap-2">
-            <Label htmlFor="name">Expense Name</Label>
+            <Label htmlFor="name">Income Name</Label>
             <Input
               id="name"
               name="name"
@@ -117,8 +117,8 @@ export function ExpensesTable({ expenses, onRefreshData }: ExpensesTableProps) {
               required
             />
           </div>
-          <Button onClick={updateExpense} className="mt-2">
-            Update Expense
+          <Button onClick={updateIncome} className="mt-2">
+            Update Income
           </Button>
         </DialogContent>
       </Dialog>

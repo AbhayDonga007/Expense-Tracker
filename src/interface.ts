@@ -14,3 +14,11 @@ export interface Expense {
   amount: number;
   createdAt: string;
 }
+
+export interface Income {
+  id: number;
+  name: string;
+  amount: number;
+  createdAt: string;
+  createdBy?: string; 
+}
