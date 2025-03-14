@@ -121,7 +121,7 @@ export default function DashboardPage() {
               Here&apos;s what&apos;s happening with your money. Let&apos;s
               manage your expenses!
             </p>
-            <FinanceAI text={financialAdvice}/>
+            {/* <FinanceAI text={financialAdvice}/> */}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

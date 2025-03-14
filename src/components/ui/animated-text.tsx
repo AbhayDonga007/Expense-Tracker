@@ -24,7 +24,7 @@ export function AnimatedText({ text }: AnimatedTextProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="font-mono"
+      className="font-mono text-blue-400 font-bold"
     >
       {displayedText}
       <motion.span

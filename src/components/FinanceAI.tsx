@@ -14,7 +14,7 @@ const FinanceAI = ({text}: Props) => {
         <CardHeader>
           <div className="flex items-center gap-3">
             <div>
-            <BrainIcon className="text-white bg-[#f31260] p-1 w-[40px] h-[40px] rounded-full" />
+            <BrainIcon className="text-white bg-blue-400 p-1 w-[40px] h-[40px] rounded-full" />
             </div>
             <CardTitle className="text-[20px] font-semibold">
               Finance Smart AI

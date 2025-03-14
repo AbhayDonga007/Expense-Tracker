@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Plus, ArrowUpCircle, User2 } from "lucide-react"
+import { LayoutDashboard, Plus, ArrowUpCircle, User2, HandCoins, ArrowLeftRight } from "lucide-react"
 
 const items = [
   {
@@ -14,12 +14,17 @@ const items = [
   {
     title: "Incomes",
     href: "/dashboard/income",
-    icon: LayoutDashboard,
+    icon: HandCoins,
   },
   {
     title: "Budgets",
     href: "/dashboard/budgets",
     icon: Plus,
+  },
+  {
+    title: "Transactions",
+    href: "/dashboard/transactions",
+    icon: ArrowLeftRight,
   },
   {
     title: "Upgrade",

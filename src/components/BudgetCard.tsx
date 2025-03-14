@@ -34,7 +34,7 @@ export function BudgetCard({ budget }: BudgetCardProps) {
             <IconComponent className="w-6 h-6 text-blue-600" />
           </div>
           <div className="flex flex-col">
-            <h3 className="font-bold text-[22px]">{budget?.name}</h3>
+            <h3 className="font-bold text-[18px]">{budget?.name}</h3>
             <p className="font-semibold text-[15px] text-gray-400">
               {budget?.totalItems ?? 0} Item{budget?.totalItems === 1 ? "" : "s"}
             </p>

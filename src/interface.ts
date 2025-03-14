@@ -1,7 +1,7 @@
 export interface Budget {
   id: number;
   name: string;
-  amount: string; // Stored as text in DB
+  amount: string; 
   icon?: string | null;
   createdBy: string;
   totalSpend?: number;
