@@ -2,12 +2,10 @@
 import { ActivityChart } from "@/components/ActivityChart";
 import { BudgetList } from "@/components/BudgetList";
 import { ExpensesTable } from "@/components/ExpensesTable";
-import FinanceAI from "@/components/FinanceAI";
 import Footer from "@/components/footer";
 import { StatCard } from "@/components/StatCard";
 import { Budget, Expense } from "@/interface";
 import { db } from "@/lib/dbConfig";
-import getFinancialAdvice from "@/lib/FinancialAdvice";
 import { Budgets, Expenses } from "@/schema";
 import { useUser } from "@clerk/nextjs";
 import { desc, eq, getTableColumns, sql } from "drizzle-orm";
@@ -20,7 +18,6 @@ export default function DashboardPage() {
   const [expenseList, setExpenseList] = useState<Expense[]>([]);
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalSpent, setTotalSpent] = useState(0);
-  console.log(expenseList);
 
   const calCardInfo = useCallback(() => {
     let spent = 0,
@@ -93,23 +90,23 @@ export default function DashboardPage() {
     if (budgetList.length > 0) calCardInfo();
   }, [budgetList, calCardInfo]);
 
-  const [financialAdvice, setFinancialAdvice] = useState<string>("");
+  // const [financialAdvice, setFinancialAdvice] = useState<string>("");
 
-  useEffect(() => {
-    const fetchFinancialAdvice = async () => {
-      if (totalBudget > 0 || totalSpent > 0) {
-        try {
-          const advice = await getFinancialAdvice(totalBudget, totalSpent,budgetList,expenseList);
-          setFinancialAdvice(advice); 
-        } catch (error) {
-          console.error("Error fetching advice:", error);
-          setFinancialAdvice("Unable to fetch financial advice at this moment.");
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchFinancialAdvice = async () => {
+  //     if (totalBudget > 0 || totalSpent > 0) {
+  //       try {
+  //         const advice = await getFinancialAdvice(totalBudget, totalSpent,budgetList,expenseList);
+  //         setFinancialAdvice(advice); 
+  //       } catch (error) {
+  //         console.error("Error fetching advice:", error);
+  //         setFinancialAdvice("Unable to fetch financial advice at this moment.");
+  //       }
+  //     }
+  //   };
 
-    fetchFinancialAdvice();
-  }, [totalBudget, totalSpent,budgetList,expenseList]);
+  //   fetchFinancialAdvice();
+  // }, [totalBudget, totalSpent,budgetList,expenseList]);
 
   return (
     <>

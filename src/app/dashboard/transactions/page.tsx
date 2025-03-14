@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { toast } from "@/hooks/use-toast"
 import { Expense, Income } from "@/interface"
-import TransactionTable from "@/components/TransactionTable"
+import TransactionTable, { Transaction } from "@/components/TransactionTable"
 import TransactionHistoryChart from "@/components/TransactionChart"
 
 export default function TransactionsPage() {
@@ -89,23 +89,22 @@ export default function TransactionsPage() {
     setSelectedMonth(month)
   }
 
-  // Handle table actions
-  const handleEditTransaction = (transaction: any) => {
+  const handleEditTransaction = (transaction: Transaction) => {
     toast({
       title: "Edit Transaction",
       description: `Editing ${transaction.type}: ${transaction.name}`,
-    })
+    });
     // In a real app, you would open a modal or navigate to an edit page
-  }
-
-  const handleDeleteTransaction = (transaction: any) => {
+  };
+  
+  const handleDeleteTransaction = (transaction: Transaction) => {
     toast({
       title: "Delete Transaction",
       description: `Deleting ${transaction.type}: ${transaction.name}`,
       variant: "destructive",
-    })
+    });
     // In a real app, you would show a confirmation dialog and then delete
-  }
+  };
 
   if (isLoading) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>

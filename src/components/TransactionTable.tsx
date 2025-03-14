@@ -38,7 +38,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Expense, Income } from "@/interface";
 
-interface Transaction {
+export interface Transaction {
   id: number;
   type: "income" | "expense";
   name: string;
@@ -110,25 +110,20 @@ export default function TransactionTable({
 
     // Filter by year
     filtered = filtered.filter((transaction) => {
-      try {
+   
         const date = parseISO(transaction.date);
         return date.getFullYear().toString() === selectedYear;
-      } catch (error) {
-        return false;
-      }
+     
     });
 
     // Filter by month if in month view
     if (activeView === "month" && selectedMonth) {
       filtered = filtered.filter((transaction) => {
-        try {
+        
           const date = parseISO(transaction.date);
           return (
             (date.getMonth() + 1).toString().padStart(2, "0") === selectedMonth
           );
-        } catch (error) {
-          return false;
-        }
       });
     }
 
@@ -207,11 +202,9 @@ export default function TransactionTable({
 
   // Format date
   const formatDate = (dateString: string) => {
-    try {
+ 
       return format(parseISO(dateString), "MMM dd, yyyy");
-    } catch (error) {
-      return "Invalid date";
-    }
+    
   };
 
   return (

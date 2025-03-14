@@ -17,6 +17,16 @@ interface TransactionHistoryChartProps {
   onMonthChange?: (month: string) => void
 }
 
+interface BarClickData {
+  monthValue?: string;
+}
+
+interface ChartData {
+  label: string;
+  income: number;
+  expense: number;
+}
+
 export default function TransactionHistoryChart({
   expenses,
   incomes,
@@ -26,9 +36,11 @@ export default function TransactionHistoryChart({
 }: TransactionHistoryChartProps) {
   const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString())
   const [selectedMonth, setSelectedMonth] = useState<string>((new Date().getMonth() + 1).toString().padStart(2, "0"))
-  const [chartData, setChartData] = useState<any[]>([])
+  // const [chartData, setChartData] = useState<[]>([])
+  // console.log(setChartData);
+  
   const [activeView, setActiveView] = useState<"year" | "month">("month")
-
+  const [chartData, setChartData] = useState<ChartData[]>([]);
   const years = Array.from({ length: 5 }, (_, i) => (new Date().getFullYear() - 2 + i).toString())
   const months = [
     { value: "01", label: "January" },
@@ -71,7 +83,7 @@ export default function TransactionHistoryChart({
   }
 
   // Handle bar click
-  const handleBarClick = (data: any) => {
+  const handleBarClick = (data: BarClickData) => {
     if (activeView === "year" && data?.monthValue) {
       setSelectedMonth(data.monthValue)
       setActiveView("month")
@@ -102,57 +114,45 @@ export default function TransactionHistoryChart({
         // Filter expenses for the selected year and month
         const filteredExpenses = expenses.filter((expense) => {
           if (!expense.createdAt) return false
-          try {
+          
             const date = parseISO(expense.createdAt)
             return (
               date.getFullYear().toString() === selectedYear &&
               (date.getMonth() + 1).toString().padStart(2, "0") === selectedMonth
             )
-          } catch (error) {
-            return false
-          }
         })
 
         // Filter incomes for the selected year and month
         const filteredIncomes = incomes.filter((income) => {
           if (!income.createdAt) return false
-          try {
+       
             const date = parseISO(income.createdAt)
             return (
               date.getFullYear().toString() === selectedYear &&
               (date.getMonth() + 1).toString().padStart(2, "0") === selectedMonth
             )
-          } catch (error) {
-            return false
-          }
         })
 
         // Aggregate expenses by day
         filteredExpenses.forEach((expense) => {
-          try {
+          
             const date = parseISO(expense.createdAt)
             const day = date.getDate().toString().padStart(2, "0")
             const dayIndex = Number.parseInt(day) - 1
             if (dayIndex >= 0 && dayIndex < data.length) {
               data[dayIndex].expense += Number(expense.amount)
             }
-          } catch (error) {
-            console.error("Error parsing expense date:", error)
-          }
         })
 
         // Aggregate incomes by day
         filteredIncomes.forEach((income) => {
-          try {
+         
             const date = parseISO(income.createdAt)
             const day = date.getDate().toString().padStart(2, "0")
             const dayIndex = Number.parseInt(day) - 1
             if (dayIndex >= 0 && dayIndex < data.length) {
               data[dayIndex].income += Number(income.amount)
             }
-          } catch (error) {
-            console.error("Error parsing income date:", error)
-          }
         })
 
         return data
@@ -170,54 +170,49 @@ export default function TransactionHistoryChart({
         // Filter expenses for the selected year
         const filteredExpenses = expenses.filter((expense) => {
           if (!expense.createdAt) return false
-          try {
+          
             const date = parseISO(expense.createdAt)
             return date.getFullYear().toString() === selectedYear
-          } catch (error) {
-            return false
-          }
+        
         })
 
         // Filter incomes for the selected year
         const filteredIncomes = incomes.filter((income) => {
           if (!income.createdAt) return false
-          try {
+         
             const date = parseISO(income.createdAt)
             return date.getFullYear().toString() === selectedYear
-          } catch (error) {
-            return false
-          }
+         
         })
 
         // Aggregate expenses by month
         filteredExpenses.forEach((expense) => {
-          try {
+          
             const date = parseISO(expense.createdAt)
             const monthIndex = date.getMonth()
             if (monthIndex >= 0 && monthIndex < data.length) {
               data[monthIndex].expense += Number(expense.amount)
             }
-          } catch (error) {
-            console.error("Error parsing expense date:", error)
-          }
+         
         })
 
         // Aggregate incomes by month
         filteredIncomes.forEach((income) => {
-          try {
+          
             const date = parseISO(income.createdAt)
             const monthIndex = date.getMonth()
             if (monthIndex >= 0 && monthIndex < data.length) {
               data[monthIndex].income += Number(income.amount)
             }
-          } catch (error) {
-            console.error("Error parsing income date:", error)
-          }
         })
 
         return data
       }
     }
+
+    
+    console.log(chartData);
+    
 
     setChartData(generateChartData())
   }, [activeView, selectedYear, selectedMonth, expenses, incomes])
@@ -274,7 +269,7 @@ export default function TransactionHistoryChart({
         </div>
       </div>
 
-      {chartData.length === 0 || chartData.every((item) => item.income === 0 && item.expense === 0) ? (
+      {chartData.length === 0 || chartData.every((item:ChartData) => item.income === 0 && item.expense === 0) ? (
         <div className="flex h-[300px] w-full items-center justify-center text-gray-400">
           No transaction data available for this period
         </div>
