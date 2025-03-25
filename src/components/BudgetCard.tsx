@@ -2,14 +2,11 @@ import { Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import React from "react";
-import { iconMap } from "@/lib/icons"; // Ensure this contains valid mappings for icons
+import { iconMap } from "@/lib/icons";
 import { Budget } from "@/interface";
 interface BudgetCardProps {
   budget: Budget; 
 }
-// interface BudgetCardProps {
-//   budget: Budget;
-// }
 
 export function BudgetCard({ budget }: BudgetCardProps) {
   const IconComponent = iconMap[budget?.icon ?? "defaultIcon"] || Home;

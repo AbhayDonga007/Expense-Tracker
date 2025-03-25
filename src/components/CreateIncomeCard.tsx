@@ -7,8 +7,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { HandCoins, PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@heroui/react";
 import { db } from "@/lib/dbConfig";
@@ -17,6 +16,7 @@ import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { Label } from "./ui/label";
 import moment from "moment";
+import { Card, CardContent } from "./ui/card";
 
 interface CreateBudgetCardProps {
   className?: string;
@@ -24,7 +24,6 @@ interface CreateBudgetCardProps {
 }
 
 const CreateIncomeCard = ({
-  className,
   onRefreshData,
 }: CreateBudgetCardProps) => {
   const [name, setName] = useState("");
@@ -36,46 +35,41 @@ const CreateIncomeCard = ({
       toast.error("Please fill all fields");
       return;
     }
-  
+
     const result = await db
       .insert(Incomes)
       .values({
         name: name,
-        amount: String(amount), // Ensure amount is stored as a string (numeric type)
-        createdAt: moment().format('DD/MM/yyy'), // Store timestamp
-        createdBy: user.primaryEmailAddress.emailAddress, // Store user's email
+        amount: String(amount), 
+        createdAt: moment().format("DD/MM/yyy"), 
+        createdBy: user.primaryEmailAddress.emailAddress, 
       })
       .returning({ insertedId: Incomes.id });
-  
+
     if (result.length > 0) {
       toast.success("Income Added Successfully");
       onRefreshData();
     }
-  
+
     setOpen(false);
   };
-  
 
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className={cn(
-            "group relative flex h-[200px] w-full flex-col items-center justify-center gap-4",
-            "rounded-xl border border-dashed border-gray-200 bg-gray-50/50",
-            "transition-all hover:border-gray-300 hover:bg-gray-50/80",
-            "dark:border-gray-800 dark:bg-gray-950/50 dark:hover:border-gray-700 dark:hover:bg-gray-950/80",
-            className
-          )}
-        >
-          <div className="rounded-full bg-gray-100 p-4 transition-transform group-hover:scale-110 dark:bg-gray-900">
-            <Plus className="h-6 w-6 text-gray-600 dark:text-gray-400" />
-          </div>
-          <span className="text-lg font-medium text-gray-600 dark:text-gray-400">
-            Create New Income
-          </span>
-        </Button>
+        <Card className="bg-[#1a1d29] border-gray-800 text-white mb-3">
+          <CardContent className="flex flex-col items-center justify-center p-10">
+            <HandCoins className="h-16 w-16 text-purple-500 mb-4" />
+            <p className="text-gray-400 text-center mb-6">
+              Add your income to start tracking and sharing expenses with others.
+            </p>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Create New Income
+            </Button>
+          </CardContent>
+        </Card>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] dark:bg-gray-950">
         <DialogHeader>

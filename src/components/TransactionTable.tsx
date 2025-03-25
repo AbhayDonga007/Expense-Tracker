@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format, parseISO } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import {
   Table,
   TableBody,
@@ -81,7 +81,16 @@ export default function TransactionTable({
     direction: "descending",
   });
 
-  // Convert expenses and incomes to a unified transaction format
+  const parseCustomDate = (dateString: string): Date | null => {
+    const dateParts = dateString.split("/");
+
+    if (dateParts.length === 3) {
+      return new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     const expenseTransactions: Transaction[] = expenses.map((expense) => ({
       id: expense.id,
@@ -104,30 +113,24 @@ export default function TransactionTable({
     setTransactions(allTransactions);
   }, [expenses, incomes]);
 
-  // Filter transactions based on selected year and month
   useEffect(() => {
     let filtered = [...transactions];
 
-    // Filter by year
     filtered = filtered.filter((transaction) => {
-   
-        const date = parseISO(transaction.date);
-        return date.getFullYear().toString() === selectedYear;
-     
+      const date = parseCustomDate(transaction.date);
+      return date && date.getFullYear().toString() === selectedYear;
     });
 
-    // Filter by month if in month view
     if (activeView === "month" && selectedMonth) {
       filtered = filtered.filter((transaction) => {
-        
-          const date = parseISO(transaction.date);
-          return (
-            (date.getMonth() + 1).toString().padStart(2, "0") === selectedMonth
-          );
+        const date = parseCustomDate(transaction.date);
+        return (
+          date &&
+          (date.getMonth() + 1).toString().padStart(2, "0") === selectedMonth
+        );
       });
     }
 
-    // Apply search filter if search query exists
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -138,7 +141,6 @@ export default function TransactionTable({
       );
     }
 
-    // Apply sorting
     filtered.sort((a, b) => {
       const aValue = a[sortConfig.key];
       const bValue = b[sortConfig.key];
@@ -167,7 +169,7 @@ export default function TransactionTable({
     });
 
     setFilteredTransactions(filtered);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   }, [
     transactions,
     selectedYear,
@@ -177,13 +179,11 @@ export default function TransactionTable({
     sortConfig,
   ]);
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
 
-  // Handle sorting
   const requestSort = (key: keyof Transaction) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -192,19 +192,19 @@ export default function TransactionTable({
     setSortConfig({ key, direction });
   };
 
-  // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "INR",
     }).format(amount);
   };
 
-  // Format date
   const formatDate = (dateString: string) => {
- 
-      return format(parseISO(dateString), "MMM dd, yyyy");
-    
+    const parsedDate = parseCustomDate(dateString) || parseISO(dateString);
+
+    return isValid(parsedDate)
+      ? format(parsedDate, "MMM dd, yyyy")
+      : "Invalid Date";
   };
 
   return (
@@ -356,7 +356,6 @@ export default function TransactionTable({
         </Table>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Select

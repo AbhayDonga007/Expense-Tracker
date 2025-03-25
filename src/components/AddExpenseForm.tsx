@@ -12,31 +12,25 @@ import moment from 'moment'
 interface AddExpenseFormProps {
   budgetId: number;
   onRefreshData: () => void; 
+  createdBy: string;
 }
 
-
-export function AddExpenseForm({budgetId,onRefreshData}:AddExpenseFormProps) {
+export function AddExpenseForm({ budgetId, onRefreshData, createdBy }: AddExpenseFormProps) {
   const [name, setName] = useState("")
   const [amount, setAmount] = useState("")
 
-  const addNewExpense =async () => {
-    // e.preventDefault()
-    // // Handle form submission
-    // console.log({ name, amount })
-    // setName("")
-    // setAmount("")
-
+  const addNewExpense = async () => {
     const result = await db.insert(Expenses).values({
-      name:name,
-      amount:amount,
-      budgetId:budgetId,
-      createdAt:moment().format('DD/MM/yyy')
-    }).returning({insertedId:Budgets.id})
+      name: name,
+      amount: amount,
+      budgetId: budgetId,
+      createdAt: moment().format('DD/MM/yyyy'),
+      createdBy: createdBy,
+    }).returning({ insertedId: Budgets.id })
 
     console.log(result);
-    if(result){
+    if (result) {
       toast.success("Expense Added")
-      // window.location.reload()
       onRefreshData()
     }
   }
@@ -47,7 +41,6 @@ export function AddExpenseForm({budgetId,onRefreshData}:AddExpenseFormProps) {
         <CardTitle>Add Expense</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* <form onSubmit={handleSubmit} className="space-y-4"> */}
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="font-medium">Expense Name</label>
@@ -57,13 +50,11 @@ export function AddExpenseForm({budgetId,onRefreshData}:AddExpenseFormProps) {
             <label className="font-medium">Expense Amount</label>
             <Input type="number" placeholder="e.g. 1000" value={amount} onChange={(e) => setAmount(e.target.value)} />
           </div>
-          <Button onClick={()=>addNewExpense()} disabled={!(name&&amount)} type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
+          <Button onClick={() => addNewExpense()} disabled={!(name && amount)} type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
             Add New Expense
           </Button>
-          </div>
-        {/* </form> */}
+        </div>
       </CardContent>
     </Card>
   )
 }
-

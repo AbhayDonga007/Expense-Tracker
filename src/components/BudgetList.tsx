@@ -1,16 +1,8 @@
-import { Home, TreePalmIcon as PalmTree } from "lucide-react";
+import { Home } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Budget } from "@/interface";
+import { iconMap } from "@/lib/icons";
 
-// Define Budget Interface
-// interface Budget {
-//   id: number;
-//   name: string;
-//   amount: number;
-//   icon?: string;
-//   totalSpend?: number;
-//   totalItems?: number;
-// }
 
 interface BudgetListProps {
   budgets: Budget[];
@@ -28,17 +20,14 @@ export const BudgetList = ({ budgets }:BudgetListProps) => {
         ) : (
           budgets.map((budget) => {
             const percentage = ((budget.totalSpend ?? 0) / Number(budget.amount)) * 100;
+            const IconComponent = iconMap[budget?.icon ?? "defaultIcon"] || Home;
 
             return (
               <div key={budget.id} className="rounded-lg border p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="rounded-full bg-gray-100 p-2">
-                      {budget.icon === "home" ? (
-                        <Home className="h-4 w-4 text-gray-600" />
-                      ) : (
-                        <PalmTree className="h-4 w-4 text-gray-600" />
-                      )}
+                    <IconComponent className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
                       <h3 className="font-semibold">{budget.name}</h3>

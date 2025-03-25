@@ -2,7 +2,7 @@
 
 import CreateIncomeCard from "@/components/CreateIncomeCard";
 import Footer from "@/components/footer";
-import { IncomeTable } from "@/components/IncomeTable";
+import IncomeTable from "@/components/IncomeTable";
 import { Income } from "@/interface";
 import { db } from "@/lib/dbConfig";
 import { Incomes } from "@/schema";
@@ -10,7 +10,6 @@ import { useUser } from "@clerk/nextjs";
 import { desc, eq, getTableColumns } from "drizzle-orm";
 import React, { useCallback, useEffect, useState } from "react";
 
-// ✅ Fixed empty object type issue
 type Props = Record<string, never>;
 
 const Page: React.FC<Props> = () => {

@@ -1,7 +1,8 @@
 "use client";
 import { ActivityChart } from "@/components/ActivityChart";
 import { BudgetList } from "@/components/BudgetList";
-import { ExpensesTable } from "@/components/ExpensesTable";
+import ExpensesTable from "@/components/ExpensesTable";
+import FinanceAI from "@/components/FinanceAI";
 import Footer from "@/components/footer";
 import { StatCard } from "@/components/StatCard";
 import { Budget, Expense } from "@/interface";
@@ -18,6 +19,7 @@ export default function DashboardPage() {
   const [expenseList, setExpenseList] = useState<Expense[]>([]);
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalSpent, setTotalSpent] = useState(0);
+  const [financialAdvice, setFinancialAdvice] = useState("");
 
   const calCardInfo = useCallback(() => {
     let spent = 0,
@@ -35,25 +37,16 @@ export default function DashboardPage() {
   const getAllExpenses = useCallback(async () => {
     if (!user?.primaryEmailAddress?.emailAddress) return;
 
-    // const result: Expense[] = await db
-    //   .select({
-    //     id: Expenses.id,
-    //     name: Expenses.name,
-    //     amount: sql<number>`${Expenses.amount}`.mapWith(Number),
-    //     createdAt: Expenses.createdAt,
-    //   })
-    //   .from(Expenses)
-    //   .where(eq(Expenses.budgetId, Budgets.id))
-    //   .orderBy(desc(Expenses.id));
     const result: Expense[] = await db
       .select({
         id: Expenses.id,
         name: Expenses.name,
         amount: sql<number>`${Expenses.amount}`.mapWith(Number),
         createdAt: Expenses.createdAt,
+        createdBy: Expenses.createdBy,
       })
       .from(Expenses)
-      .innerJoin(Budgets, eq(Expenses.budgetId, Budgets.id)) // Ensure Budgets is included in the query
+      .innerJoin(Budgets, eq(Expenses.budgetId, Budgets.id))
       .orderBy(desc(Expenses.id));
 
     setExpenseList(result);
@@ -78,6 +71,21 @@ export default function DashboardPage() {
 
     setBudgetList(result);
   }, [user]);
+  
+  const fetchFinancialAdvice = useCallback(async (data: {
+    totalBudget: number;
+    totalSpent: number;
+    budgetList: Budget[];
+    expenseList: Expense[];
+  }) => {
+    const res = await fetch("/api/financial-advice", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  
+    const json = await res.json();
+    return json.advice;
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -85,28 +93,21 @@ export default function DashboardPage() {
       getAllExpenses();
     }
   }, [user, getBudgetList, getAllExpenses]);
+  
+  useEffect(() => {
+    if (budgetList.length > 0 && expenseList.length > 0) {
+      fetchFinancialAdvice({
+        totalBudget,
+        totalSpent,
+        budgetList,
+        expenseList,
+      }).then((advice) => setFinancialAdvice(advice));
+    }
+  }, [budgetList, expenseList, totalBudget, totalSpent, fetchFinancialAdvice]);
 
   useEffect(() => {
     if (budgetList.length > 0) calCardInfo();
   }, [budgetList, calCardInfo]);
-
-  // const [financialAdvice, setFinancialAdvice] = useState<string>("");
-
-  // useEffect(() => {
-  //   const fetchFinancialAdvice = async () => {
-  //     if (totalBudget > 0 || totalSpent > 0) {
-  //       try {
-  //         const advice = await getFinancialAdvice(totalBudget, totalSpent,budgetList,expenseList);
-  //         setFinancialAdvice(advice); 
-  //       } catch (error) {
-  //         console.error("Error fetching advice:", error);
-  //         setFinancialAdvice("Unable to fetch financial advice at this moment.");
-  //       }
-  //     }
-  //   };
-
-  //   fetchFinancialAdvice();
-  // }, [totalBudget, totalSpent,budgetList,expenseList]);
 
   return (
     <>
@@ -118,7 +119,7 @@ export default function DashboardPage() {
               Here&apos;s what&apos;s happening with your money. Let&apos;s
               manage your expenses!
             </p>
-            {/* <FinanceAI text={financialAdvice}/> */}
+            <FinanceAI text={financialAdvice} />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

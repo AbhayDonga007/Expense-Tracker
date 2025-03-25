@@ -14,7 +14,7 @@ const plans = [
   },
   {
     name: "Enterprise",
-    price: "Custom",
+    price: "$25",
     features: ["Custom features", "Dedicated account manager", "On-premise deployment", "24/7 phone support"],
   },
 ]
