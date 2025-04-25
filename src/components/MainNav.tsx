@@ -33,7 +33,7 @@ const items = [
   },
   {
     title: "Upgrade",
-    href: "/upgrade",
+    href: "/dashboard/upgrade",
     icon: ArrowUpCircle,
   },
   {
