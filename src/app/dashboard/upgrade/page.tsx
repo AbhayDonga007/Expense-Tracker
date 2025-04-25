@@ -1,9 +1,7 @@
 import Pricing2 from '@/components/component/Pricing'
 import React from 'react'
 
-type Props = {}
-
-const page = (props: Props) => {
+const page = () => {
   return (
     <Pricing2 />
   )
