@@ -39,7 +39,7 @@ export default function TransactionsPage() {
         amount: parseFloat(income.amount),
       }));
       
-
+      setIsLoading(false);
       setExpenses(formattedExpenses);
       setIncomes(formattedIncomes);
   };
